@@ -1,16 +1,19 @@
-import Flashcards from './Flashcards'
+import Flashcards from "./Flashcards";
 
 const fla = [
-  {question: "Who is the fattest person on earh", answer: "yo momma"},
-  {question: "Who is the second fattest person on earh", answer: "yo momma's momma"}
-]
+  { question: "Who is the fattest person on earth", answer: "yo momma" },
+  {
+    question: "Who is the second fattest person on earth",
+    answer: "yo momma's momma",
+  },
+];
 
 function App() {
   return (
     <div>
-      <Flashcards flashcards={fla}/>
+      <Flashcards flashcards={fla} />
     </div>
-  )
+  );
 }
 
 export default App;
