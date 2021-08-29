@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
+import QuestionAnswer from "./QuestionAnswer";
 
 const Container = styled.div`
   border: 1px solid black;
@@ -16,11 +17,11 @@ function Flashcard({ flashcard }) {
 
   return (
     <Container>
-      <div>{flashcard.question}</div>
+      <QuestionAnswer text={flashcard.question} />
       <button className="link-button" onClick={onAnswerVisibilityToggleClicked}>
         {answerVisibility ? "Hide Answer" : "Reveal Answer"}
       </button>
-      <div>{answerVisibility && <span>{flashcard.answer}</span>}</div>
+      {answerVisibility && <QuestionAnswer text={flashcard.answer} />}
     </Container>
   );
 }

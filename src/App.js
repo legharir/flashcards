@@ -4,10 +4,8 @@ import Flashcards from "./Flashcards";
 function App() {
   const [flashcards, setFlashcards] = useState([]);
 
-  console.log(flashcards);
-
   const createFlashcards = (pasteData) => {
-    pasteData = pasteData.split("\r\n");
+    pasteData = pasteData.split(/\t|\r\n|\n/);
     const newFlashCards = [];
 
     for (let i = 0; i < pasteData.length - 1; i = i + 2) {
@@ -28,9 +26,9 @@ function App() {
   });
 
   return (
-    <div>
+    <>
       <Flashcards flashcards={flashcards} />
-    </div>
+    </>
   );
 }
 

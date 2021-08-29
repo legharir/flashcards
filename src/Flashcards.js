@@ -5,7 +5,7 @@ function Flashcards({ flashcards }) {
     <Flashcard key={flashcard.question} flashcard={flashcard} />
   ));
 
-  return <div>{flashcardsList}</div>;
+  return <>{flashcardsList}</>;
 }
 
 export default Flashcards;
