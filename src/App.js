@@ -1,25 +1,16 @@
-import logo from './logo.svg';
-import './App.css';
+import Flashcards from './Flashcards'
+
+const fla = [
+  {question: "Who is the fattest person on earh", answer: "yo momma"},
+  {question: "Who is the second fattest person on earh", answer: "yo momma's momma"}
+]
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Flashcards flashcards={fla}/>
     </div>
-  );
+  )
 }
 
 export default App;
