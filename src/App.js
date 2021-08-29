@@ -1,17 +1,35 @@
+import { useState } from "react";
 import Flashcards from "./Flashcards";
 
-const fla = [
-  { question: "Who is the fattest person on earth", answer: "yo momma" },
-  {
-    question: "Who is the second fattest person on earth",
-    answer: "yo momma's momma",
-  },
-];
-
 function App() {
+  const [flashcards, setFlashcards] = useState([]);
+
+  console.log(flashcards);
+
+  const createFlashcards = (pasteData) => {
+    pasteData = pasteData.split("\r\n");
+    const newFlashCards = [];
+
+    for (let i = 0; i < pasteData.length - 1; i = i + 2) {
+      if (pasteData[i] !== "" && pasteData[i + 1] !== "") {
+        newFlashCards.push({
+          question: pasteData[i],
+          answer: pasteData[i + 1],
+        });
+      }
+    }
+
+    setFlashcards(newFlashCards);
+  };
+
+  document.addEventListener("paste", (e) => {
+    const pasteData = (e.clipboardData || window.clipboardData).getData("text");
+    createFlashcards(pasteData);
+  });
+
   return (
     <div>
-      <Flashcards flashcards={fla} />
+      <Flashcards flashcards={flashcards} />
     </div>
   );
 }
