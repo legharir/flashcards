@@ -13,6 +13,7 @@ function App() {
         newFlashCards.push({
           question: pasteData[i],
           answer: pasteData[i + 1],
+          status: "unattempted",
         });
       }
     }
@@ -25,9 +26,19 @@ function App() {
     createFlashcards(pasteData);
   });
 
+  const updateFlashcardStatus = (flashcardIndex, status) => {
+    const updatedFlashcards = flashcards.map((flashcard, idx) =>
+      idx !== flashcardIndex ? flashcard : { ...flashcard, status }
+    );
+    setFlashcards(updatedFlashcards);
+  };
+
   return (
     <>
-      <Flashcards flashcards={flashcards} />
+      <Flashcards
+        flashcards={flashcards}
+        updateFlashcardStatus={updateFlashcardStatus}
+      />
     </>
   );
 }
