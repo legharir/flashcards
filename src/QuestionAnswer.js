@@ -7,21 +7,21 @@ const Container = styled.div`
   align-items: flex-start;
 `;
 
-function QuestionAnswer({ text }) {
-  const [imageUrl, setImageUrl] = useState("");
-
+function QuestionAnswer({ text, imageUrl, setFlashcardImage }) {
   async function handlePasteImage() {
     const clipboardData = await navigator.clipboard.read();
     for (const item of clipboardData) {
       const blob = await item.getType("image/png");
-      setImageUrl(URL.createObjectURL(blob));
+      setFlashcardImage(URL.createObjectURL(blob));
     }
   }
 
   return (
     <Container>
       <span>{text}</span>
-      <img src={imageUrl} styles={{ maxWidth: "60%", maxHeight: "500px" }} />
+      {imageUrl && (
+        <img src={imageUrl} styles={{ maxWidth: "60%", maxHeight: "500px" }} />
+      )}
       <button onClick={handlePasteImage}>Paste Image</button>
     </Container>
   );

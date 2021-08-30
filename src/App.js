@@ -26,9 +26,23 @@ function App() {
     createFlashcards(pasteData);
   });
 
-  const updateFlashcardStatus = (flashcardIndex, status) => {
+  const setFlashcardStatus = (flashcardIndex, status) => {
     const updatedFlashcards = flashcards.map((flashcard, idx) =>
       idx !== flashcardIndex ? flashcard : { ...flashcard, status }
+    );
+    setFlashcards(updatedFlashcards);
+  };
+
+  const setFlashcardImage = (flashcardIndex, isForQuestion, imageUrl) => {
+    const contentsToUpdate = {};
+    if (isForQuestion) {
+      contentsToUpdate.questionImageUrl = imageUrl;
+    } else {
+      contentsToUpdate.answerImageUrl = imageUrl;
+    }
+
+    const updatedFlashcards = flashcards.map((flashcard, idx) =>
+      idx !== flashcardIndex ? flashcard : { ...flashcard, ...contentsToUpdate }
     );
     setFlashcards(updatedFlashcards);
   };
@@ -37,7 +51,8 @@ function App() {
     <>
       <Flashcards
         flashcards={flashcards}
-        updateFlashcardStatus={updateFlashcardStatus}
+        setFlashcardStatus={setFlashcardStatus}
+        setFlashcardImage={setFlashcardImage}
       />
     </>
   );

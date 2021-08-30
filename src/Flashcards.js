@@ -1,11 +1,12 @@
 import Flashcard from "./Flashcard";
 
-function Flashcards({ flashcards, updateFlashcardStatus }) {
+function Flashcards({ flashcards, setFlashcardStatus, setFlashcardImage }) {
   const flashcardsList = flashcards.map((flashcard, idx) => (
     <Flashcard
       key={flashcard.question}
       flashcard={flashcard}
-      updateFlashcardStatus={(...args) => updateFlashcardStatus(idx, ...args)}
+      setFlashcardStatus={(...args) => setFlashcardStatus(idx, ...args)}
+      setFlashcardImage={(...args) => setFlashcardImage(idx, ...args)}
     />
   ));
 

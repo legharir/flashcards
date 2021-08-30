@@ -18,7 +18,7 @@ const StatusChanger = styled.span`
   cursor: pointer;
 `;
 
-function Flashcard({ flashcard, updateFlashcardStatus }) {
+function Flashcard({ flashcard, setFlashcardStatus, setFlashcardImage }) {
   const [answerVisibility, setAnswerVisibility] = useState(false);
 
   const onAnswerVisibilityToggleClicked = () => {
@@ -28,21 +28,31 @@ function Flashcard({ flashcard, updateFlashcardStatus }) {
   return (
     <Container status={flashcard.status}>
       <div>
-        <StatusChanger onClick={() => updateFlashcardStatus("correct")}>
+        <StatusChanger onClick={() => setFlashcardStatus("correct")}>
           ✔️
         </StatusChanger>
-        <StatusChanger onClick={() => updateFlashcardStatus("incorrect")}>
+        <StatusChanger onClick={() => setFlashcardStatus("incorrect")}>
           ❌
         </StatusChanger>
-        <StatusChanger onClick={() => updateFlashcardStatus("unattempted")}>
+        <StatusChanger onClick={() => setFlashcardStatus("unattempted")}>
           🔄
         </StatusChanger>
       </div>
-      <QuestionAnswer text={flashcard.question} />
+      <QuestionAnswer
+        text={flashcard.question}
+        imageUrl={flashcard.questionImageUrl}
+        setFlashcardImage={(...args) => setFlashcardImage(true, ...args)}
+      />
       <button className="link-button" onClick={onAnswerVisibilityToggleClicked}>
         {answerVisibility ? "Hide Answer" : "Reveal Answer"}
       </button>
-      {answerVisibility && <QuestionAnswer text={flashcard.answer} />}
+      {answerVisibility && (
+        <QuestionAnswer
+          text={flashcard.answer}
+          imageUrl={flashcard.answerImageUrl}
+          setFlashcardImage={(...args) => setFlashcardImage(false, ...args)}
+        />
+      )}
     </Container>
   );
 }
