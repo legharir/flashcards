@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Flashcards from "./Flashcards";
 
 function App() {
-  const [flashcards, setFlashcards] = useState([]);
+  const [flashcards, setFlashcards] = useState(
+    JSON.parse(localStorage.getItem("flashcards")) ?? []
+  );
 
   const createFlashcards = (pasteData) => {
     pasteData = pasteData.split(/\t|\r\n|\n/);
@@ -21,10 +23,27 @@ function App() {
     setFlashcards(newFlashCards);
   };
 
-  document.addEventListener("paste", (e) => {
-    const pasteData = (e.clipboardData || window.clipboardData).getData("text");
-    createFlashcards(pasteData);
-  });
+  useEffect(() => {
+    document.addEventListener("paste", (e) => {
+      if (
+        flashcards.length > 0 &&
+        window.confirm(
+          "WAIT! Are you sure you want to replace the current flashcards with the ones you copied?"
+        )
+      ) {
+        const pasteData = e.clipboardData.getData("text");
+        createFlashcards(pasteData);
+      }
+    });
+
+    return () => {
+      document.removeEventListener("paste");
+    };
+  }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem("flashcards", JSON.stringify(flashcards));
+  }, [flashcards]);
 
   const setFlashcardStatus = (flashcardIndex, status) => {
     const updatedFlashcards = flashcards.map((flashcard, idx) =>

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import styled from "styled-components";
 
 const Container = styled.div`
@@ -20,7 +19,11 @@ function QuestionAnswer({ text, imageUrl, setFlashcardImage }) {
     <Container>
       <span>{text}</span>
       {imageUrl && (
-        <img src={imageUrl} styles={{ maxWidth: "60%", maxHeight: "500px" }} />
+        <img
+          src={imageUrl}
+          alt=""
+          styles={{ maxWidth: "60%", maxHeight: "500px" }}
+        />
       )}
       <button onClick={handlePasteImage}>Paste Image</button>
     </Container>
