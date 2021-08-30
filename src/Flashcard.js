@@ -9,7 +9,7 @@ const statusToColor = {
 
 const Container = styled.div`
   border: 1px solid black;
-  margin: 2em;
+  margin: 1em 0em 1em 0em;
   padding: 1em;
   background: ${(props) => statusToColor[props.status]};
 `;

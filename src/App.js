@@ -1,5 +1,14 @@
 import { useEffect, useState } from "react";
 import Flashcards from "./Flashcards";
+import styled from "styled-components";
+
+const Container = styled.div`
+  margin: 2em;
+`;
+
+const Clickable = styled.span`
+  cursor: pointer;
+`;
 
 function App() {
   const [flashcards, setFlashcards] = useState(
@@ -66,14 +75,29 @@ function App() {
     setFlashcards(updatedFlashcards);
   };
 
+  const sortFlashcards = (status) => {
+    const updatedFlashcards = [...flashcards].sort((a, b) => {
+      if (a.status === status && b.status !== status) return -1;
+      else if (a.status !== status && b.status === status) return 1;
+      return 0;
+    });
+    setFlashcards(updatedFlashcards);
+  };
+
   return (
-    <>
+    <Container>
+      <div>
+        Sort:
+        <Clickable onClick={() => sortFlashcards("correct")}>✔️</Clickable>
+        <Clickable onClick={() => sortFlashcards("incorrect")}>❌</Clickable>
+        <Clickable onClick={() => sortFlashcards("unattempted")}>🔄</Clickable>
+      </div>
       <Flashcards
         flashcards={flashcards}
         setFlashcardStatus={setFlashcardStatus}
         setFlashcardImage={setFlashcardImage}
       />
-    </>
+    </Container>
   );
 }
 
