@@ -2,6 +2,26 @@ import { useEffect, useState } from "react";
 import Flashcards from "./Flashcards";
 import styled from "styled-components";
 
+function shuffle(array) {
+  let currentIndex = array.length,
+    randomIndex;
+
+  // While there remain elements to shuffle...
+  while (currentIndex != 0) {
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex],
+      array[currentIndex],
+    ];
+  }
+
+  return array;
+}
+
 const Container = styled.div`
   margin: 2em;
 `;
@@ -13,6 +33,10 @@ const Horizontal = styled.div`
 
 const Clickable = styled.span`
   cursor: pointer;
+`;
+
+const AttemptBadge = styled.span`
+  margin: 0.2em;
 `;
 
 function App() {
@@ -107,6 +131,21 @@ function App() {
     setFlashcards(updatedFlashcards);
   };
 
+  const sortFlashcardsByAttempt = (attempt) => {
+    const getNumAttempts = (flashcard) =>
+      flashcard.attempts.reduce((acc, cur) => {
+        if (cur === attempt) {
+          return acc + 1;
+        }
+        return acc;
+      }, 0);
+
+    const updatedFlashcards = [...flashcards].sort(
+      (a, b) => getNumAttempts(b) - getNumAttempts(a)
+    );
+    setFlashcards(updatedFlashcards);
+  };
+
   const handleShowHideAllFlashcardAnswers = (showFlashcardAnswers) => {
     setFlashcards(
       flashcards.map((flashcard) => ({
@@ -114,6 +153,10 @@ function App() {
         showAnswer: showFlashcardAnswers,
       }))
     );
+  };
+
+  const shuffleFlashcards = () => {
+    setFlashcards(shuffle([...flashcards]));
   };
 
   return (
@@ -127,6 +170,23 @@ function App() {
             🔄
           </Clickable>
         </div>
+        <div>
+          Sort:
+          <Clickable onClick={() => sortFlashcardsByAttempt("correct")}>
+            <AttemptBadge className="badge badge-success">correct</AttemptBadge>
+          </Clickable>
+          <Clickable onClick={() => sortFlashcardsByAttempt("incorrect")}>
+            <AttemptBadge className="badge badge-danger">
+              incorrect
+            </AttemptBadge>
+          </Clickable>
+        </div>
+        <button
+          onClick={() => shuffleFlashcards()}
+          className="btn btn-primary btn-sm"
+        >
+          Shuffle
+        </button>
         <div>
           <button
             className="btn btn-primary btn-sm"
