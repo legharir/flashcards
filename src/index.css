@@ -12,11 +12,14 @@ code {
     monospace;
 }
 
-.link-button {
+.button-link {
   background: none!important;
   border: none;
   padding: 0!important;
-  color: #069;
-  text-decoration: underline;
+  color: #007BFF;
   cursor: pointer;
+}
+
+.no-margin-left {
+  padding: 0em;
 }

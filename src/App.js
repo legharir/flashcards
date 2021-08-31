@@ -30,7 +30,8 @@ function App() {
           question: pasteData[i],
           answer: pasteData[i + 1],
           status: "unattempted",
-          showAnswer: true,
+          showAnswer: false,
+          attempts: [],
         });
       }
     }
@@ -39,22 +40,24 @@ function App() {
   };
 
   useEffect(() => {
-    document.addEventListener("paste", (e) => {
+    const handlePaste = (e) => {
       if (
         flashcards.length > 0 &&
-        window.confirm(
+        !window.confirm(
           "WAIT! Are you sure you want to replace the current flashcards with the ones you copied?"
         )
       ) {
-        const pasteData = e.clipboardData.getData("text");
-        createFlashcards(pasteData);
+        return;
       }
-    });
-
-    return () => {
-      document.removeEventListener("paste");
+      const pasteData = e.clipboardData.getData("text");
+      createFlashcards(pasteData);
     };
-  }, []);
+
+    document.addEventListener("paste", handlePaste);
+    return () => {
+      document.removeEventListener("paste", handlePaste);
+    };
+  }, [flashcards.length]);
 
   useEffect(() => {
     window.localStorage.setItem("flashcards", JSON.stringify(flashcards));
@@ -69,7 +72,14 @@ function App() {
 
   const setFlashcardStatus = (flashcardIndex, status) => {
     const updatedFlashcards = flashcards.map((flashcard, idx) =>
-      idx !== flashcardIndex ? flashcard : { ...flashcard, status }
+      idx !== flashcardIndex
+        ? flashcard
+        : {
+            ...flashcard,
+            status,
+            attempts:
+              status === "unattempted" ? [] : [...flashcard.attempts, status],
+          }
     );
     setFlashcards(updatedFlashcards);
   };
@@ -118,10 +128,16 @@ function App() {
           </Clickable>
         </div>
         <div>
-          <button onClick={() => handleShowHideAllFlashcardAnswers(true)}>
+          <button
+            className="btn btn-primary btn-sm"
+            onClick={() => handleShowHideAllFlashcardAnswers(true)}
+          >
             Show Answers
           </button>{" "}
-          <button onClick={() => handleShowHideAllFlashcardAnswers(false)}>
+          <button
+            className="btn btn-primary btn-sm"
+            onClick={() => handleShowHideAllFlashcardAnswers(false)}
+          >
             Hide Answers
           </button>
         </div>

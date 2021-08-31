@@ -19,7 +19,9 @@ function QuestionAnswer({ text, imageUrl, setFlashcardImage }) {
     <Container>
       <span>{text}</span>
       {imageUrl && <img src={imageUrl} alt="" styles={{ maxWidth: "60%" }} />}
-      <button onClick={handlePasteImage}>Paste Image</button>
+      <button className="btn btn-secondary btn-sm" onClick={handlePasteImage}>
+        Paste Image
+      </button>
     </Container>
   );
 }

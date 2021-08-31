@@ -1,4 +1,3 @@
-import { useState } from "react";
 import styled from "styled-components";
 import QuestionAnswer from "./QuestionAnswer";
 
@@ -18,6 +17,15 @@ const StatusChanger = styled.span`
   cursor: pointer;
 `;
 
+const Horizontal = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
+const AttemptBadge = styled.span`
+  margin: 0.2em;
+`;
+
 function Flashcard({
   flashcard,
   setShowAnswer,
@@ -26,24 +34,38 @@ function Flashcard({
 }) {
   return (
     <Container status={flashcard.status}>
-      <div>
-        <StatusChanger onClick={() => setFlashcardStatus("correct")}>
-          ✔️
-        </StatusChanger>
-        <StatusChanger onClick={() => setFlashcardStatus("incorrect")}>
-          ❌
-        </StatusChanger>
-        <StatusChanger onClick={() => setFlashcardStatus("unattempted")}>
-          🔄
-        </StatusChanger>
-      </div>
+      <Horizontal>
+        <div>
+          <StatusChanger onClick={() => setFlashcardStatus("correct")}>
+            ✔️
+          </StatusChanger>
+          <StatusChanger onClick={() => setFlashcardStatus("incorrect")}>
+            ❌
+          </StatusChanger>
+          <StatusChanger onClick={() => setFlashcardStatus("unattempted")}>
+            🔄
+          </StatusChanger>
+        </div>
+        <div>
+          {flashcard.attempts.map((attempt, idx) => (
+            <AttemptBadge
+              key={flashcard.question + idx}
+              className={`badge badge-${
+                attempt === "correct" ? "success" : "danger"
+              }`}
+            >
+              {attempt}
+            </AttemptBadge>
+          ))}
+        </div>
+      </Horizontal>
       <QuestionAnswer
         text={flashcard.question}
         imageUrl={flashcard.questionImageUrl}
         setFlashcardImage={(...args) => setFlashcardImage(true, ...args)}
       />
       <button
-        className="link-button"
+        className="btn btn-link btn-sm no-margin-left"
         onClick={() => setShowAnswer(!flashcard.showAnswer)}
       >
         {flashcard.showAnswer ? "Hide Answer" : "Reveal Answer"}
