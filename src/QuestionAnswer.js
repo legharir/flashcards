@@ -18,13 +18,7 @@ function QuestionAnswer({ text, imageUrl, setFlashcardImage }) {
   return (
     <Container>
       <span>{text}</span>
-      {imageUrl && (
-        <img
-          src={imageUrl}
-          alt=""
-          styles={{ maxWidth: "60%", maxHeight: "500px" }}
-        />
-      )}
+      {imageUrl && <img src={imageUrl} alt="" styles={{ maxWidth: "60%" }} />}
       <button onClick={handlePasteImage}>Paste Image</button>
     </Container>
   );

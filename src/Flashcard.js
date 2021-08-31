@@ -18,13 +18,12 @@ const StatusChanger = styled.span`
   cursor: pointer;
 `;
 
-function Flashcard({ flashcard, setFlashcardStatus, setFlashcardImage }) {
-  const [answerVisibility, setAnswerVisibility] = useState(false);
-
-  const onAnswerVisibilityToggleClicked = () => {
-    setAnswerVisibility((answerVisibility) => !answerVisibility);
-  };
-
+function Flashcard({
+  flashcard,
+  setShowAnswer,
+  setFlashcardStatus,
+  setFlashcardImage,
+}) {
   return (
     <Container status={flashcard.status}>
       <div>
@@ -43,10 +42,13 @@ function Flashcard({ flashcard, setFlashcardStatus, setFlashcardImage }) {
         imageUrl={flashcard.questionImageUrl}
         setFlashcardImage={(...args) => setFlashcardImage(true, ...args)}
       />
-      <button className="link-button" onClick={onAnswerVisibilityToggleClicked}>
-        {answerVisibility ? "Hide Answer" : "Reveal Answer"}
+      <button
+        className="link-button"
+        onClick={() => setShowAnswer(!flashcard.showAnswer)}
+      >
+        {flashcard.showAnswer ? "Hide Answer" : "Reveal Answer"}
       </button>
-      {answerVisibility && (
+      {flashcard.showAnswer && (
         <QuestionAnswer
           text={flashcard.answer}
           imageUrl={flashcard.answerImageUrl}

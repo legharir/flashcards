@@ -6,6 +6,11 @@ const Container = styled.div`
   margin: 2em;
 `;
 
+const Horizontal = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
 const Clickable = styled.span`
   cursor: pointer;
 `;
@@ -25,6 +30,7 @@ function App() {
           question: pasteData[i],
           answer: pasteData[i + 1],
           status: "unattempted",
+          showAnswer: true,
         });
       }
     }
@@ -53,6 +59,13 @@ function App() {
   useEffect(() => {
     window.localStorage.setItem("flashcards", JSON.stringify(flashcards));
   }, [flashcards]);
+
+  const setShowAnswer = (flashcardIndex, showAnswer) => {
+    const updatedFlashcards = flashcards.map((flashcard, idx) =>
+      idx !== flashcardIndex ? flashcard : { ...flashcard, showAnswer }
+    );
+    setFlashcards(updatedFlashcards);
+  };
 
   const setFlashcardStatus = (flashcardIndex, status) => {
     const updatedFlashcards = flashcards.map((flashcard, idx) =>
@@ -84,16 +97,38 @@ function App() {
     setFlashcards(updatedFlashcards);
   };
 
+  const handleShowHideAllFlashcardAnswers = (showFlashcardAnswers) => {
+    setFlashcards(
+      flashcards.map((flashcard) => ({
+        ...flashcard,
+        showAnswer: showFlashcardAnswers,
+      }))
+    );
+  };
+
   return (
     <Container>
-      <div>
-        Sort:
-        <Clickable onClick={() => sortFlashcards("correct")}>✔️</Clickable>
-        <Clickable onClick={() => sortFlashcards("incorrect")}>❌</Clickable>
-        <Clickable onClick={() => sortFlashcards("unattempted")}>🔄</Clickable>
-      </div>
+      <Horizontal>
+        <div>
+          Sort:
+          <Clickable onClick={() => sortFlashcards("correct")}>✔️</Clickable>
+          <Clickable onClick={() => sortFlashcards("incorrect")}>❌</Clickable>
+          <Clickable onClick={() => sortFlashcards("unattempted")}>
+            🔄
+          </Clickable>
+        </div>
+        <div>
+          <button onClick={() => handleShowHideAllFlashcardAnswers(true)}>
+            Show Answers
+          </button>{" "}
+          <button onClick={() => handleShowHideAllFlashcardAnswers(false)}>
+            Hide Answers
+          </button>
+        </div>
+      </Horizontal>
       <Flashcards
         flashcards={flashcards}
+        setShowAnswer={setShowAnswer}
         setFlashcardStatus={setFlashcardStatus}
         setFlashcardImage={setFlashcardImage}
       />
