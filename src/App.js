@@ -219,7 +219,7 @@ function App() {
         className="btn btn-primary btn-small"
         onClick={addFlaschardsFromClipboard}
       >
-        Add Flashcards from clipboard
+        Add flashcards from clipboard
       </button>
     </Container>
   );

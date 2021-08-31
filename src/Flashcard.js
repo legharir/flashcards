@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import QuestionAnswer from "./QuestionAnswer";
+import { Question, Answer } from "./QuestionAnswer";
 
 const statusToColor = {
   correct: "#b9edaf",
@@ -59,9 +59,8 @@ function Flashcard({
           ))}
         </div>
       </Horizontal>
-      <QuestionAnswer
-        text={flashcard.question}
-        imageUrl={flashcard.questionImageUrl}
+      <Question
+        flashcard={flashcard}
         setFlashcardImage={(...args) => setFlashcardImage(true, ...args)}
       />
       <button
@@ -71,9 +70,8 @@ function Flashcard({
         {flashcard.showAnswer ? "Hide Answer" : "Reveal Answer"}
       </button>
       {flashcard.showAnswer && (
-        <QuestionAnswer
-          text={flashcard.answer}
-          imageUrl={flashcard.answerImageUrl}
+        <Answer
+          flashcard={flashcard}
           setFlashcardImage={(...args) => setFlashcardImage(false, ...args)}
         />
       )}

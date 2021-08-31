@@ -6,7 +6,29 @@ const Container = styled.div`
   align-items: flex-start;
 `;
 
-function QuestionAnswer({ text, imageUrl, setFlashcardImage }) {
+export function Question({ flashcard, setFlashcardImage }) {
+  return (
+    <QuestionAnswer
+      text={flashcard.question}
+      variant="question"
+      imageUrl={flashcard.questionImageUrl}
+      setFlashcardImage={setFlashcardImage}
+    />
+  );
+}
+
+export function Answer({ flashcard, setFlashcardImage }) {
+  return (
+    <QuestionAnswer
+      text={flashcard.question}
+      variant="answer"
+      imageUrl={flashcard.answerImageUrl}
+      setFlashcardImage={setFlashcardImage}
+    />
+  );
+}
+
+function QuestionAnswer({ text, imageUrl, variant, setFlashcardImage }) {
   async function handlePasteImage() {
     const clipboardData = await navigator.clipboard.read();
     for (const item of clipboardData) {
@@ -17,7 +39,7 @@ function QuestionAnswer({ text, imageUrl, setFlashcardImage }) {
 
   return (
     <Container>
-      <span>{text}</span>
+      {variant === "question" ? <strong>{text}</strong> : <i>{text}</i>}
       {imageUrl && <img src={imageUrl} alt="" styles={{ maxWidth: "60%" }} />}
       <button className="btn btn-secondary btn-sm" onClick={handlePasteImage}>
         Paste Image
@@ -25,5 +47,3 @@ function QuestionAnswer({ text, imageUrl, setFlashcardImage }) {
     </Container>
   );
 }
-
-export default QuestionAnswer;
