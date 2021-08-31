@@ -60,7 +60,7 @@ function App() {
       }
     }
 
-    setFlashcards(newFlashCards);
+    return newFlashCards;
   };
 
   useEffect(() => {
@@ -74,7 +74,8 @@ function App() {
         return;
       }
       const pasteData = e.clipboardData.getData("text");
-      createFlashcards(pasteData);
+      const newFlashcards = createFlashcards(pasteData);
+      setFlashcards(newFlashcards);
     };
 
     document.addEventListener("paste", handlePaste);
@@ -159,6 +160,12 @@ function App() {
     setFlashcards(shuffle([...flashcards]));
   };
 
+  const addFlaschardsFromClipboard = async () => {
+    const pasteData = await navigator.clipboard.readText();
+    const flashcardsToAdd = createFlashcards(pasteData);
+    setFlashcards((flashcards) => [...flashcards, ...flashcardsToAdd]);
+  };
+
   return (
     <Container>
       <Horizontal>
@@ -208,6 +215,12 @@ function App() {
         setFlashcardStatus={setFlashcardStatus}
         setFlashcardImage={setFlashcardImage}
       />
+      <button
+        className="btn btn-primary btn-small"
+        onClick={addFlaschardsFromClipboard}
+      >
+        Add Flashcards from clipboard
+      </button>
     </Container>
   );
 }
