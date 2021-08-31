@@ -166,6 +166,10 @@ function App() {
     setFlashcards((flashcards) => [...flashcards, ...flashcardsToAdd]);
   };
 
+  const deleteFlashcard = (flashcardIndex) => {
+    setFlashcards(flashcards.filter((_, idx) => idx !== flashcardIndex));
+  };
+
   return (
     <Container>
       <Horizontal>
@@ -214,6 +218,7 @@ function App() {
         setShowAnswer={setShowAnswer}
         setFlashcardStatus={setFlashcardStatus}
         setFlashcardImage={setFlashcardImage}
+        deleteFlashcard={deleteFlashcard}
       />
       <button
         className="btn btn-primary btn-small"

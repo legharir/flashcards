@@ -13,7 +13,7 @@ const Container = styled.div`
   background: ${(props) => statusToColor[props.status]};
 `;
 
-const StatusChanger = styled.span`
+const Clickable = styled.span`
   cursor: pointer;
 `;
 
@@ -31,34 +31,36 @@ function Flashcard({
   setShowAnswer,
   setFlashcardStatus,
   setFlashcardImage,
+  deleteFlashcard,
 }) {
   return (
     <Container status={flashcard.status}>
       <Horizontal>
         <div>
-          <StatusChanger onClick={() => setFlashcardStatus("correct")}>
+          <Clickable onClick={() => setFlashcardStatus("correct")}>
             ✔️
-          </StatusChanger>
-          <StatusChanger onClick={() => setFlashcardStatus("incorrect")}>
+          </Clickable>
+          <Clickable onClick={() => setFlashcardStatus("incorrect")}>
             ❌
-          </StatusChanger>
-          <StatusChanger onClick={() => setFlashcardStatus("unattempted")}>
+          </Clickable>
+          <Clickable onClick={() => setFlashcardStatus("unattempted")}>
             🔄
-          </StatusChanger>
+          </Clickable>
         </div>
-        <div>
-          {flashcard.attempts.map((attempt, idx) => (
-            <AttemptBadge
-              key={flashcard.question + idx}
-              className={`badge badge-${
-                attempt === "correct" ? "success" : "danger"
-              }`}
-            >
-              {attempt}
-            </AttemptBadge>
-          ))}
-        </div>
+        <Clickable onClick={() => deleteFlashcard()}>🗑️</Clickable>
       </Horizontal>
+      <div>
+        {flashcard.attempts.map((attempt, idx) => (
+          <AttemptBadge
+            key={flashcard.question + idx}
+            className={`badge badge-${
+              attempt === "correct" ? "success" : "danger"
+            }`}
+          >
+            {attempt}
+          </AttemptBadge>
+        ))}
+      </div>
       <Question
         flashcard={flashcard}
         setFlashcardImage={(...args) => setFlashcardImage(true, ...args)}
