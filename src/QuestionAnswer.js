@@ -1,5 +1,9 @@
 import styled from "styled-components";
 
+const Clickable = styled.span`
+  cursor: pointer;
+`;
+
 const Container = styled.div`
   display: flex;
   justify-content: space-between;
@@ -41,9 +45,7 @@ function QuestionAnswer({ text, imageUrl, variant, setFlashcardImage }) {
     <Container>
       {variant === "question" ? <strong>{text}</strong> : <i>{text}</i>}
       {imageUrl && <img src={imageUrl} alt="" styles={{ maxWidth: "60%" }} />}
-      <button className="btn btn-secondary btn-sm" onClick={handlePasteImage}>
-        Paste Image
-      </button>
+      <Clickable onClick={handlePasteImage}>🖼️</Clickable>
     </Container>
   );
 }

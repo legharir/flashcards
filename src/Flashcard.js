@@ -49,7 +49,7 @@ function Flashcard({
         </div>
         <Clickable onClick={() => deleteFlashcard()}>🗑️</Clickable>
       </Horizontal>
-      <div>
+      <div style={{ margin: "1em 1em 1em 0em" }}>
         {flashcard.attempts.map((attempt, idx) => (
           <AttemptBadge
             key={flashcard.question + idx}

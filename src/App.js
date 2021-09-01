@@ -7,7 +7,7 @@ function shuffle(array) {
     randomIndex;
 
   // While there remain elements to shuffle...
-  while (currentIndex != 0) {
+  while (currentIndex !== 0) {
     // Pick a remaining element...
     randomIndex = Math.floor(Math.random() * currentIndex);
     currentIndex--;
@@ -211,6 +211,19 @@ function App() {
           >
             Hide Answers
           </button>
+        </div>
+        <div>
+          Attempted:{" "}
+          {flashcards.reduce(
+            (acc, cur) => (cur.attempts.length > 0 ? acc + 1 : acc),
+            0
+          )}{" "}
+          Unattempted:{" "}
+          {flashcards.reduce(
+            (acc, cur) => (cur.attempts.length > 0 ? acc : acc + 1),
+            0
+          )}{" "}
+          Total: {flashcards.length}{" "}
         </div>
       </Horizontal>
       <Flashcards
