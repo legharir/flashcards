@@ -15,10 +15,8 @@ function DeckPage({ decks, setDecks }) {
       {newDeckCreated && <Redirect to={`/deck/${newDeckName}`} />}
 
       {decks.map((deck) => (
-        <div>
-          <Link key={deck} to={`/deck/${deck}`}>
-            {deck}
-          </Link>
+        <div key={deck}>
+          <Link to={`/deck/${deck}`}>{deck}</Link>
         </div>
       ))}
 

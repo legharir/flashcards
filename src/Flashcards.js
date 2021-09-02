@@ -9,7 +9,7 @@ function Flashcards({
 }) {
   const flashcardsList = flashcards.map((flashcard, idx) => (
     <Flashcard
-      key={flashcard.question}
+      key={flashcard.question + idx}
       flashcard={flashcard}
       setShowAnswer={(...args) => setShowAnswer(idx, ...args)}
       setFlashcardStatus={(...args) => setFlashcardStatus(idx, ...args)}

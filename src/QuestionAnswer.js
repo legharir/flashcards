@@ -24,7 +24,7 @@ export function Question({ flashcard, setFlashcardImage }) {
 export function Answer({ flashcard, setFlashcardImage }) {
   return (
     <QuestionAnswer
-      text={flashcard.question}
+      text={flashcard.answer}
       variant="answer"
       imageUrl={flashcard.answerImageUrl}
       setFlashcardImage={setFlashcardImage}

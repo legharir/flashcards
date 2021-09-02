@@ -23,6 +23,44 @@ function shuffle(array) {
   return array;
 }
 
+function getImageUrls(rtfData) {
+  let hexImages = [];
+  let curIdx = 0;
+  while (curIdx < rtfData.length) {
+    const blipuidIdx = rtfData.indexOf("blipuid", curIdx);
+    if (blipuidIdx === -1) break;
+
+    const hexImgStartIdx = rtfData.indexOf("}", blipuidIdx);
+    const hexImgEndIdx = rtfData.indexOf("}", hexImgStartIdx + 1);
+    const hexImg = rtfData.substring(hexImgStartIdx + 1, hexImgEndIdx);
+
+    hexImages.push(hexImg.trim());
+    curIdx = hexImgEndIdx + 1;
+  }
+
+  // for some reason only every even indexed hex image is valid.
+  return hexImages
+    .filter((_, idx) => idx % 2 === 0)
+    .map((hexImage) => {
+      const imgByteArray = hexStringToByteArray(hexImage);
+      const imageBlob = new Blob([imgByteArray], {
+        type: "application/octet-stream",
+      });
+      return window.URL.createObjectURL(imageBlob);
+    });
+}
+
+function hexStringToByteArray(hexString) {
+  const cleanedHexString = hexString.replace(/[^A-Fa-f0-9]/g, "");
+  let bytes = [];
+
+  for (let i = 0; i < cleanedHexString.length / 2; i++) {
+    let byte = cleanedHexString.substr(i * 2, 2);
+    bytes[i] = parseInt(byte, 16);
+  }
+  return new Uint8Array(bytes);
+}
+
 const Container = styled.div`
   margin: 2em;
 `;
@@ -43,28 +81,41 @@ const AttemptBadge = styled.span`
 function FlashcardPage() {
   const { deckName } = useParams();
 
-  console.log(deckName);
-
   const [flashcards, setFlashcards] = useState(
     JSON.parse(localStorage.getItem(deckName)) ?? []
   );
 
-  const createFlashcards = (pasteData) => {
-    pasteData = pasteData.split(/\t|\r\n|\n/);
+  const textContainsImage = (text) => {
+    if (text === " ") return true;
+    const startsWithWhitespace = /^\s/.test(text);
+    const endsWithWhitespace = /\s$/.test(text);
+    return Boolean(startsWithWhitespace ^ endsWithWhitespace);
+  };
+
+  const createFlashcards = (textData, imageData) => {
+    textData = textData.split(/\t|\r\n|\n/);
     const newFlashCards = [];
 
-    for (let i = 0; i < pasteData.length - 1; i = i + 2) {
-      if (pasteData[i] !== "" && pasteData[i + 1] !== "") {
-        newFlashCards.push({
-          question: pasteData[i],
-          answer: pasteData[i + 1],
-          status: "unattempted",
-          showAnswer: false,
-          attempts: [],
-        });
-      }
+    for (let i = 0; i < textData.length - 1; i = i + 2) {
+      const question = textData[i];
+      const answer = textData[i + 1];
+
+      newFlashCards.push({
+        question,
+        answer,
+        questionImageUrl: textContainsImage(question) ? imageData.shift() : "",
+        answerImageUrl: textContainsImage(answer) ? imageData.shift() : "",
+        status: "unattempted",
+        showAnswer: false,
+        attempts: [],
+      });
     }
 
+    if (imageData.length > 0) {
+      console.error("Something strange happened...");
+      console.log(textData);
+      console.log(imageData);
+    }
     return newFlashCards;
   };
 
@@ -78,8 +129,12 @@ function FlashcardPage() {
       ) {
         return;
       }
-      const pasteData = e.clipboardData.getData("text");
-      const newFlashcards = createFlashcards(pasteData);
+      const textData = e.clipboardData.getData("text");
+      const rtfData = e.clipboardData.getData("text/rtf");
+      console.log(rtfData);
+      const imageUrls = getImageUrls(rtfData);
+
+      const newFlashcards = createFlashcards(textData, imageUrls);
       setFlashcards(newFlashcards);
     };
 
@@ -91,7 +146,7 @@ function FlashcardPage() {
 
   useEffect(() => {
     localStorage.setItem(deckName, JSON.stringify(flashcards));
-  }, [flashcards]);
+  }, [deckName, flashcards]);
 
   const setShowAnswer = (flashcardIndex, showAnswer) => {
     const updatedFlashcards = flashcards.map((flashcard, idx) =>
