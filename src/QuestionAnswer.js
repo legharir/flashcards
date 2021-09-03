@@ -1,51 +1,36 @@
 import styled from "styled-components";
 
-const Clickable = styled.span`
-  cursor: pointer;
-`;
-
 const Container = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
 `;
 
-export function Question({ flashcard, setFlashcardImage }) {
+export function Question({ flashcard }) {
   return (
     <QuestionAnswer
       text={flashcard.question}
       variant="question"
       imageUrl={flashcard.questionImageUrl}
-      setFlashcardImage={setFlashcardImage}
     />
   );
 }
 
-export function Answer({ flashcard, setFlashcardImage }) {
+export function Answer({ flashcard }) {
   return (
     <QuestionAnswer
       text={flashcard.answer}
       variant="answer"
       imageUrl={flashcard.answerImageUrl}
-      setFlashcardImage={setFlashcardImage}
     />
   );
 }
 
-function QuestionAnswer({ text, imageUrl, variant, setFlashcardImage }) {
-  async function handlePasteImage() {
-    const clipboardData = await navigator.clipboard.read();
-    for (const item of clipboardData) {
-      const blob = await item.getType("image/png");
-      setFlashcardImage(URL.createObjectURL(blob));
-    }
-  }
-
+function QuestionAnswer({ text, imageUrl, variant }) {
   return (
     <Container>
       {variant === "question" ? <strong>{text}</strong> : <i>{text}</i>}
       {imageUrl && <img src={imageUrl} alt="" styles={{ maxWidth: "60%" }} />}
-      <Clickable onClick={handlePasteImage}>🖼️</Clickable>
     </Container>
   );
 }

@@ -23,7 +23,7 @@ function shuffle(array) {
   return array;
 }
 
-function getImageUrls(rtfData) {
+function getImageBlobs(rtfData) {
   let hexImages = [];
   let curIdx = 0;
   while (curIdx < rtfData.length) {
@@ -43,11 +43,21 @@ function getImageUrls(rtfData) {
     .filter((_, idx) => idx % 2 === 0)
     .map((hexImage) => {
       const imgByteArray = hexStringToByteArray(hexImage);
-      const imageBlob = new Blob([imgByteArray], {
+      return new Blob([imgByteArray], {
         type: "application/octet-stream",
       });
-      return window.URL.createObjectURL(imageBlob);
     });
+}
+
+function blobTodataUrl(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      resolve(reader.result);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
 }
 
 function hexStringToByteArray(hexString) {
@@ -92,7 +102,7 @@ function FlashcardPage() {
     return Boolean(startsWithWhitespace ^ endsWithWhitespace);
   };
 
-  const createFlashcards = (textData, imageData) => {
+  const createFlashcards = (textData, imageUrls) => {
     textData = textData.split(/\t|\r\n|\n/);
     const newFlashCards = [];
 
@@ -103,24 +113,24 @@ function FlashcardPage() {
       newFlashCards.push({
         question,
         answer,
-        questionImageUrl: textContainsImage(question) ? imageData.shift() : "",
-        answerImageUrl: textContainsImage(answer) ? imageData.shift() : "",
+        questionImageUrl: textContainsImage(question) ? imageUrls.shift() : "",
+        answerImageUrl: textContainsImage(answer) ? imageUrls.shift() : "",
         status: "unattempted",
         showAnswer: false,
         attempts: [],
       });
     }
 
-    if (imageData.length > 0) {
+    if (imageUrls.length > 0) {
       console.error("Something strange happened...");
       console.log(textData);
-      console.log(imageData);
+      console.log(imageUrls);
     }
     return newFlashCards;
   };
 
   useEffect(() => {
-    const handlePaste = (e) => {
+    async function handlePaste(e) {
       if (
         flashcards.length > 0 &&
         !window.confirm(
@@ -131,12 +141,16 @@ function FlashcardPage() {
       }
       const textData = e.clipboardData.getData("text");
       const rtfData = e.clipboardData.getData("text/rtf");
-      console.log(rtfData);
-      const imageUrls = getImageUrls(rtfData);
+      const imageBlobs = getImageBlobs(rtfData);
+
+      const imageUrls = [];
+      for (const imageBlob of imageBlobs) {
+        imageUrls.push(await blobTodataUrl(imageBlob));
+      }
 
       const newFlashcards = createFlashcards(textData, imageUrls);
       setFlashcards(newFlashcards);
-    };
+    }
 
     document.addEventListener("paste", handlePaste);
     return () => {
@@ -290,7 +304,6 @@ function FlashcardPage() {
         flashcards={flashcards}
         setShowAnswer={setShowAnswer}
         setFlashcardStatus={setFlashcardStatus}
-        setFlashcardImage={setFlashcardImage}
         deleteFlashcard={deleteFlashcard}
       />
       <button

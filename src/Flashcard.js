@@ -30,7 +30,6 @@ function Flashcard({
   flashcard,
   setShowAnswer,
   setFlashcardStatus,
-  setFlashcardImage,
   deleteFlashcard,
 }) {
   return (
@@ -61,22 +60,14 @@ function Flashcard({
           </AttemptBadge>
         ))}
       </div>
-      <Question
-        flashcard={flashcard}
-        setFlashcardImage={(...args) => setFlashcardImage(true, ...args)}
-      />
+      <Question flashcard={flashcard} />
       <button
         className="btn btn-link btn-sm no-margin-left"
         onClick={() => setShowAnswer(!flashcard.showAnswer)}
       >
         {flashcard.showAnswer ? "Hide Answer" : "Reveal Answer"}
       </button>
-      {flashcard.showAnswer && (
-        <Answer
-          flashcard={flashcard}
-          setFlashcardImage={(...args) => setFlashcardImage(false, ...args)}
-        />
-      )}
+      {flashcard.showAnswer && <Answer flashcard={flashcard} />}
     </Container>
   );
 }

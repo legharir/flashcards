@@ -4,7 +4,6 @@ function Flashcards({
   flashcards,
   setShowAnswer,
   setFlashcardStatus,
-  setFlashcardImage,
   deleteFlashcard,
 }) {
   const flashcardsList = flashcards.map((flashcard, idx) => (
@@ -13,7 +12,6 @@ function Flashcards({
       flashcard={flashcard}
       setShowAnswer={(...args) => setShowAnswer(idx, ...args)}
       setFlashcardStatus={(...args) => setFlashcardStatus(idx, ...args)}
-      setFlashcardImage={(...args) => setFlashcardImage(idx, ...args)}
       deleteFlashcard={(...args) => deleteFlashcard(idx, ...args)}
     />
   ));
