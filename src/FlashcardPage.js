@@ -97,8 +97,6 @@ const Breather = styled.span`
 
 const FlaschardsContainer = styled.div`
   overflow: auto;
-  border-top: 0.5px solid black;
-  border-bottom: 0.5px solid black;
   padding: 1em;
   margin-top: 1em;
 `;
