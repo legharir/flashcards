@@ -14,7 +14,7 @@ function App() {
 
   return (
     <Router>
-      <div>
+      <>
         <Link to="/">Decks</Link>
 
         <Switch>
@@ -25,7 +25,7 @@ function App() {
             <FlashcardPage />
           </Route>
         </Switch>
-      </div>
+      </>
     </Router>
   );
 }

@@ -73,6 +73,9 @@ function hexStringToByteArray(hexString) {
 
 const Container = styled.div`
   margin: 2em;
+  max-height: 93vh;
+  display: flex;
+  flex-direction: column;
 `;
 
 const Horizontal = styled.div`
@@ -90,6 +93,14 @@ const AttemptBadge = styled.span`
 
 const Breather = styled.span`
   margin: 1em 1em;
+`;
+
+const FlaschardsContainer = styled.div`
+  overflow: auto;
+  border-top: 0.5px solid black;
+  border-bottom: 0.5px solid black;
+  padding: 1em;
+  margin-top: 1em;
 `;
 
 function FlashcardPage() {
@@ -133,27 +144,30 @@ function FlashcardPage() {
     return newFlashCards;
   };
 
+  async function addFlashcardsFromClipboardData(clipboardData) {
+    const textData = clipboardData.getData("text");
+    const rtfData = clipboardData.getData("text/rtf");
+    const imageBlobs = getImageBlobs(rtfData);
+
+    const imageUrls = [];
+    for (const imageBlob of imageBlobs) {
+      imageUrls.push(await blobTodataUrl(imageBlob));
+    }
+
+    const flashcardsToAdd = createFlashcards(textData, imageUrls);
+    setFlashcards((flashcards) => [...flashcards, ...flashcardsToAdd]);
+  }
+
   useEffect(() => {
     async function handlePaste(e) {
       if (
         flashcards.length > 0 &&
-        !window.confirm(
-          "WAIT! Are you sure you want to replace the current flashcards with the ones you copied?"
-        )
+        !window.confirm("Add flashcards from clipboard?")
       ) {
         return;
       }
-      const textData = e.clipboardData.getData("text");
-      const rtfData = e.clipboardData.getData("text/rtf");
-      const imageBlobs = getImageBlobs(rtfData);
 
-      const imageUrls = [];
-      for (const imageBlob of imageBlobs) {
-        imageUrls.push(await blobTodataUrl(imageBlob));
-      }
-
-      const newFlashcards = createFlashcards(textData, imageUrls);
-      setFlashcards(newFlashcards);
+      addFlashcardsFromClipboardData(e.clipboardData);
     }
 
     document.addEventListener("paste", handlePaste);
@@ -238,96 +252,112 @@ function FlashcardPage() {
     setFlashcards(shuffle([...flashcards]));
   };
 
-  const addFlaschardsFromClipboard = async () => {
-    const pasteData = await navigator.clipboard.readText();
-    const flashcardsToAdd = createFlashcards(pasteData);
-    setFlashcards((flashcards) => [...flashcards, ...flashcardsToAdd]);
-  };
-
   const deleteFlashcard = (flashcardIndex) => {
     setFlashcards(flashcards.filter((_, idx) => idx !== flashcardIndex));
   };
 
+  const deleteFlashcards = () => {
+    if (
+      window.confirm("Are you sure you want to delete all your flashcards?")
+    ) {
+      setFlashcards([]);
+    }
+  };
+
   return (
     <Container>
-      <Horizontal>
-        <div>
-          Sort:
-          <Clickable onClick={() => sortFlashcards("correct")}>✔️</Clickable>
-          <Clickable onClick={() => sortFlashcards("incorrect")}>❌</Clickable>
-          <Clickable onClick={() => sortFlashcards("unattempted")}>
-            🔄
-          </Clickable>
-        </div>
-        <div>
-          Sort:
-          <Clickable onClick={() => sortFlashcardsByAttempt("correct")}>
-            <AttemptBadge className="badge badge-success">correct</AttemptBadge>
-          </Clickable>
-          <Clickable onClick={() => sortFlashcardsByAttempt("incorrect")}>
-            <AttemptBadge className="badge badge-danger">
-              incorrect
-            </AttemptBadge>
-          </Clickable>
-        </div>
-        <button
-          onClick={() => shuffleFlashcards()}
-          className="btn btn-primary btn-sm"
-        >
-          Shuffle
-        </button>
-        <div>
+      {flashcards.length > 0 ? (
+        <Horizontal>
+          <div>
+            Sort:
+            <Clickable onClick={() => sortFlashcards("correct")}>✔️</Clickable>
+            <Clickable onClick={() => sortFlashcards("incorrect")}>
+              ❌
+            </Clickable>
+            <Clickable onClick={() => sortFlashcards("unattempted")}>
+              🔄
+            </Clickable>
+          </div>
+          <div>
+            Sort:
+            <Clickable onClick={() => sortFlashcardsByAttempt("correct")}>
+              <AttemptBadge className="badge badge-success">
+                correct
+              </AttemptBadge>
+            </Clickable>
+            <Clickable onClick={() => sortFlashcardsByAttempt("incorrect")}>
+              <AttemptBadge className="badge badge-danger">
+                incorrect
+              </AttemptBadge>
+            </Clickable>
+          </div>
           <button
-            className="btn btn-primary btn-sm"
-            onClick={() => handleShowHideAllFlashcardAnswers(true)}
+            onClick={() => shuffleFlashcards()}
+            className="btn btn-secondary btn-sm"
           >
-            Show Answers
-          </button>{" "}
-          <button
-            className="btn btn-primary btn-sm"
-            onClick={() => handleShowHideAllFlashcardAnswers(false)}
-          >
-            Hide Answers
+            Shuffle
           </button>
-        </div>
+          <div>
+            <button
+              className="btn btn-secondary btn-sm"
+              onClick={() => handleShowHideAllFlashcardAnswers(true)}
+            >
+              Show Answers
+            </button>{" "}
+            <button
+              className="btn btn-secondary btn-sm"
+              onClick={() => handleShowHideAllFlashcardAnswers(false)}
+            >
+              Hide Answers
+            </button>
+          </div>
+          <div>
+            <Breather>
+              Attempted:{" "}
+              {
+                <strong>
+                  {flashcards.reduce(
+                    (acc, cur) => (cur.attempts.length > 0 ? acc + 1 : acc),
+                    0
+                  )}
+                </strong>
+              }
+            </Breather>
+            <Breather>
+              Unattempted:{" "}
+              {
+                <strong>
+                  {flashcards.reduce(
+                    (acc, cur) => (cur.attempts.length > 0 ? acc : acc + 1),
+                    0
+                  )}
+                </strong>
+              }
+            </Breather>
+            <Breather>Total: {<strong>{flashcards.length}</strong>}</Breather>
+          </div>
+          <div>
+            <button
+              className="btn btn-danger btn-small"
+              onClick={deleteFlashcards}
+            >
+              Delete all flashcards
+            </button>
+          </div>
+        </Horizontal>
+      ) : (
         <div>
-          <Breather>
-            Attempted:{" "}
-            {
-              <strong>
-                {flashcards.reduce(
-                  (acc, cur) => (cur.attempts.length > 0 ? acc + 1 : acc),
-                  0
-                )}
-              </strong>
-            }
-          </Breather>
-          <Breather>
-            Unattempted:{" "}
-            {
-              <strong>
-                {flashcards.reduce(
-                  (acc, cur) => (cur.attempts.length > 0 ? acc : acc + 1),
-                  0
-                )}
-              </strong>
-            }
-          </Breather>
-          <Breather>Total: {<strong>{flashcards.length}</strong>}</Breather>
+          <h2>Copy some data, then use ⌘+V to create flashcards.</h2>
         </div>
-      </Horizontal>
-      <Flashcards
-        flashcards={flashcards}
-        setShowAnswer={setShowAnswer}
-        setFlashcardStatus={setFlashcardStatus}
-        deleteFlashcard={deleteFlashcard}
-      />
-      <button
-        className="btn btn-primary btn-small"
-        onClick={addFlaschardsFromClipboard}
-      >
-        Add flashcards from clipboard
-      </button>
+      )}
+      <FlaschardsContainer>
+        <Flashcards
+          flashcards={flashcards}
+          setShowAnswer={setShowAnswer}
+          setFlashcardStatus={setFlashcardStatus}
+          deleteFlashcard={deleteFlashcard}
+        />
+      </FlaschardsContainer>
     </Container>
   );
 }

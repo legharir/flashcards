@@ -1,5 +1,10 @@
 import { useState } from "react";
 import { Link, Redirect } from "react-router-dom";
+import styled from "styled-components";
+
+const Container = styled.div`
+  padding: 1em;
+`;
 
 function DeckPage({ decks, setDecks }) {
   const [newDeckName, setNewDeckName] = useState("");
@@ -11,7 +16,7 @@ function DeckPage({ decks, setDecks }) {
   };
 
   return (
-    <div>
+    <Container>
       {newDeckCreated && <Redirect to={`/deck/${newDeckName}`} />}
 
       {decks.map((deck) => (
@@ -23,11 +28,12 @@ function DeckPage({ decks, setDecks }) {
       <input
         value={newDeckName}
         onChange={(e) => setNewDeckName(e.target.value)}
+        style={{ marginRight: "0.5em" }}
       ></input>
       <button className="btn btn-primary" onClick={createNewDeck}>
         Create New Deck
       </button>
-    </div>
+    </Container>
   );
 }
 

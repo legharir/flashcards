@@ -7,10 +7,11 @@ const statusToColor = {
 };
 
 const Container = styled.div`
-  border: 1px solid black;
+  border: 1px solid #a4a4a4;
   margin: 1em 0em 1em 0em;
   padding: 1em;
   background: ${(props) => statusToColor[props.status]};
+  border-radius: 5px;
 `;
 
 const Clickable = styled.span`
