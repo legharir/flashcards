@@ -88,6 +88,10 @@ const AttemptBadge = styled.span`
   margin: 0.2em;
 `;
 
+const Breather = styled.span`
+  margin: 1em 1em;
+`;
+
 function FlashcardPage() {
   const { deckName } = useParams();
 
@@ -287,17 +291,29 @@ function FlashcardPage() {
           </button>
         </div>
         <div>
-          Attempted:{" "}
-          {flashcards.reduce(
-            (acc, cur) => (cur.attempts.length > 0 ? acc + 1 : acc),
-            0
-          )}{" "}
-          Unattempted:{" "}
-          {flashcards.reduce(
-            (acc, cur) => (cur.attempts.length > 0 ? acc : acc + 1),
-            0
-          )}{" "}
-          Total: {flashcards.length}{" "}
+          <Breather>
+            Attempted:{" "}
+            {
+              <strong>
+                {flashcards.reduce(
+                  (acc, cur) => (cur.attempts.length > 0 ? acc + 1 : acc),
+                  0
+                )}
+              </strong>
+            }
+          </Breather>
+          <Breather>
+            Unattempted:{" "}
+            {
+              <strong>
+                {flashcards.reduce(
+                  (acc, cur) => (cur.attempts.length > 0 ? acc : acc + 1),
+                  0
+                )}
+              </strong>
+            }
+          </Breather>
+          <Breather>Total: {<strong>{flashcards.length}</strong>}</Breather>
         </div>
       </Horizontal>
       <Flashcards
