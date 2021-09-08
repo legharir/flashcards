@@ -83,6 +83,12 @@ const Horizontal = styled.div`
   justify-content: space-between;
 `;
 
+const Vertical = styled.div`
+  overflow: none;
+  display: flex;
+  flex-direction: column;
+`;
+
 const Clickable = styled.span`
   cursor: pointer;
 `;
@@ -92,13 +98,21 @@ const AttemptBadge = styled.span`
 `;
 
 const Breather = styled.span`
-  margin: 1em 1em;
+  margin-left: 1em;
+  margin-right: 1em;
 `;
 
 const FlaschardsContainer = styled.div`
   overflow: auto;
-  padding: 1em;
-  margin-top: 1em;
+`;
+
+const SortOptions = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const DeleteAllButton = styled.div`
+  justify-self: flex-end;
 `;
 
 function FlashcardPage() {
@@ -112,7 +126,7 @@ function FlashcardPage() {
 
     req.onerror = (e) => {
       console.error(
-        "Could not open connection to database: ",
+        "Could not open connection to database, error code: ",
         e.target.errorCode
       );
     };
@@ -287,48 +301,58 @@ function FlashcardPage() {
         <Horizontal>
           <div>
             Sort:
-            <Clickable onClick={() => sortFlashcards("correct")}>✔️</Clickable>
-            <Clickable onClick={() => sortFlashcards("incorrect")}>
-              ❌
-            </Clickable>
-            <Clickable onClick={() => sortFlashcards("unattempted")}>
-              🔄
-            </Clickable>
+            <SortOptions>
+              <div>
+                <Clickable onClick={() => sortFlashcards("correct")}>
+                  ✔️
+                </Clickable>
+                <Clickable onClick={() => sortFlashcards("incorrect")}>
+                  ❌
+                </Clickable>
+                <Clickable onClick={() => sortFlashcards("unattempted")}>
+                  🔄
+                </Clickable>
+              </div>
+              <div>
+                <Clickable onClick={() => sortFlashcardsByAttempt("correct")}>
+                  <AttemptBadge className="badge badge-success">
+                    # correct
+                  </AttemptBadge>
+                </Clickable>
+                <Clickable onClick={() => sortFlashcardsByAttempt("incorrect")}>
+                  <AttemptBadge className="badge badge-danger">
+                    # incorrect
+                  </AttemptBadge>
+                </Clickable>
+              </div>
+            </SortOptions>
           </div>
-          <div>
-            Sort:
-            <Clickable onClick={() => sortFlashcardsByAttempt("correct")}>
-              <AttemptBadge className="badge badge-success">
-                correct
-              </AttemptBadge>
-            </Clickable>
-            <Clickable onClick={() => sortFlashcardsByAttempt("incorrect")}>
-              <AttemptBadge className="badge badge-danger">
-                incorrect
-              </AttemptBadge>
-            </Clickable>
-          </div>
-          <button
-            onClick={() => shuffleFlashcards()}
-            className="btn btn-secondary btn-sm"
-          >
-            Shuffle
-          </button>
           <div>
             <button
+              style={{ maxHeight: "50%" }}
+              onClick={() => shuffleFlashcards()}
+              className="btn btn-secondary btn-sm"
+            >
+              Shuffle
+            </button>
+          </div>
+          <div className="btn-group">
+            <button
+              style={{ maxHeight: "50%" }}
               className="btn btn-secondary btn-sm"
               onClick={() => handleShowHideAllFlashcardAnswers(true)}
             >
               Show Answers
             </button>{" "}
             <button
+              style={{ maxHeight: "50%" }}
               className="btn btn-secondary btn-sm"
               onClick={() => handleShowHideAllFlashcardAnswers(false)}
             >
               Hide Answers
             </button>
           </div>
-          <div>
+          <Vertical>
             <Breather>
               Attempted:{" "}
               {
@@ -352,15 +376,15 @@ function FlashcardPage() {
               }
             </Breather>
             <Breather>Total: {<strong>{flashcards.length}</strong>}</Breather>
-          </div>
-          <div>
+          </Vertical>
+          <DeleteAllButton>
             <button
               className="btn btn-danger btn-small"
               onClick={deleteFlashcards}
             >
-              Delete all flashcards
+              Delete flashcards
             </button>
-          </div>
+          </DeleteAllButton>
         </Horizontal>
       ) : (
         <div>
