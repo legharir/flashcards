@@ -100,6 +100,7 @@ const AttemptBadge = styled.span`
 const Breather = styled.span`
   margin-left: 1em;
   margin-right: 1em;
+  white-space: nowrap;
 `;
 
 const FlaschardsContainer = styled.div`
