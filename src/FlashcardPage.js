@@ -104,9 +104,64 @@ const FlaschardsContainer = styled.div`
 function FlashcardPage() {
   const { deckName } = useParams();
 
-  const [flashcards, setFlashcards] = useState(
-    JSON.parse(localStorage.getItem(deckName)) ?? []
-  );
+  const [flashcards, setFlashcards] = useState([]);
+  const [db, setDb] = useState(null);
+
+  useEffect(() => {
+    const req = indexedDB.open("flashcards", 1);
+
+    req.onerror = (e) => {
+      console.error(
+        "Could not open connection to database: ",
+        e.target.errorCode
+      );
+    };
+
+    req.onsuccess = (e) => {
+      const db = e.target.result;
+      db.onerror = (e) => console.error(e.target.errorCode);
+      setDb(db);
+
+      const transaction = db.transaction("decks");
+      const objectStore = transaction.objectStore("decks");
+      const request = objectStore.get(deckName);
+      request.onsuccess = (e) => {
+        setFlashcards(request.result?.flashcards ?? []);
+      };
+    };
+
+    req.onupgradeneeded = (e) => {
+      console.log("Performing DB migration...");
+      const db = e.target.result;
+      db.createObjectStore("decks", { keyPath: "name" });
+    };
+  }, [deckName]);
+
+  useEffect(() => {
+    async function handlePaste(e) {
+      if (
+        flashcards.length > 0 &&
+        !window.confirm("Add flashcards from clipboard?")
+      ) {
+        return;
+      }
+
+      addFlashcardsFromClipboardData(e.clipboardData);
+    }
+
+    document.addEventListener("paste", handlePaste);
+    return () => {
+      document.removeEventListener("paste", handlePaste);
+    };
+  }, [flashcards.length]);
+
+  useEffect(() => {
+    if (db) {
+      const transaction = db.transaction("decks", "readwrite");
+      const objectStore = transaction.objectStore("decks");
+      objectStore.put({ name: deckName, flashcards });
+    }
+  }, [db, deckName, flashcards]);
 
   const textContainsImage = (text) => {
     if (text === " ") return true;
@@ -156,28 +211,6 @@ function FlashcardPage() {
     setFlashcards((flashcards) => [...flashcards, ...flashcardsToAdd]);
   }
 
-  useEffect(() => {
-    async function handlePaste(e) {
-      if (
-        flashcards.length > 0 &&
-        !window.confirm("Add flashcards from clipboard?")
-      ) {
-        return;
-      }
-
-      addFlashcardsFromClipboardData(e.clipboardData);
-    }
-
-    document.addEventListener("paste", handlePaste);
-    return () => {
-      document.removeEventListener("paste", handlePaste);
-    };
-  }, [flashcards.length]);
-
-  useEffect(() => {
-    localStorage.setItem(deckName, JSON.stringify(flashcards));
-  }, [deckName, flashcards]);
-
   const setShowAnswer = (flashcardIndex, showAnswer) => {
     const updatedFlashcards = flashcards.map((flashcard, idx) =>
       idx !== flashcardIndex ? flashcard : { ...flashcard, showAnswer }
@@ -195,20 +228,6 @@ function FlashcardPage() {
             attempts:
               status === "unattempted" ? [] : [...flashcard.attempts, status],
           }
-    );
-    setFlashcards(updatedFlashcards);
-  };
-
-  const setFlashcardImage = (flashcardIndex, isForQuestion, imageUrl) => {
-    const contentsToUpdate = {};
-    if (isForQuestion) {
-      contentsToUpdate.questionImageUrl = imageUrl;
-    } else {
-      contentsToUpdate.answerImageUrl = imageUrl;
-    }
-
-    const updatedFlashcards = flashcards.map((flashcard, idx) =>
-      idx !== flashcardIndex ? flashcard : { ...flashcard, ...contentsToUpdate }
     );
     setFlashcards(updatedFlashcards);
   };
